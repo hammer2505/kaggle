@@ -1,46 +1,40 @@
 import pandas as pd
 import numpy as np
-from scipy.sparse import csr_matrix, hstack
+import time
+import os
+import classification
 
 ################### read data ###################
-train = pd.read_csv('../data/train_drop.csv')
-test = pd.read_csv('../data/train_drop.csv')
+t1 = time.time()
+train = pd.read_csv('../data/train.csv')
+test = pd.read_csv('../data/test.csv')
 
-# set test loss to NaN
 test['loss'] = np.nan
+joined = pd.concat([train, test])
 
-# response and IDs
-y = train['loss'].values
-id_train = train['id'].values
-id_test = test['id'].values
+for column in list(train.select_dtypes(include=['object']).columns):
+    if train[column].nunique() != test[column].nunique():
+        set_train = set(train[column].unique())
+        set_test = set(test[column].unique())
+        remove_train = set_train - set_test
+        remove_test = set_test - set_train
 
-# stack train test
-ntrain = train.shape[0]
-tr_te = pd.concat((train, test), axis=0)
+        remove = remove_train.union(remove_test)
 
-# Preprocessing and transforming to sparse data
-sparse_data = []
+        def filter_cat(x):
+            if x in remove:
+                return np.nan
+            return x
 
-f_cat = [f for f in tr_te.columns if 'cat' in f]
-for f in f_cat:
-    dummy = pd.get_dummies(tr_te[f].astype('category'))
-    tmp = csr_matrix(dummy)
-    sparse_data.append(tmp)
+        joined[column] = joined[column].apply(lambda x: filter_cat(x), 1)
 
-f_num = [f for f in tr_te.columns if 'cont' in f]
-scaler = StandardScaler()
-tmp = csr_matrix(scaler.fit_transform(tr_te[f_num]))
-sparse_data.append(tmp)
+    joined[column] = pd.factorize(joined[column].values, sort=True)[0]
 
-del(tr_te, train, test)
-
-# sparse train and test data
-xtr_te = hstack(sparse_data, format='csr')
-xtrain = xtr_te[:ntrain, :]
-xtest = xtr_te[ntrain:, :]
-
-print('Dim train', xtrain.shape)
-print('Dim test', xtest.shape)
-
-data_train.to_csv("../data/train_encode.csv")
-data_test.to_csv("../data/test_encode.csv")
+train = joined[joined['loss'].notnull()]
+test = joined[joined['loss'].isnull()]
+y = train['loss']
+X = train.drop(['loss', 'id'], 1)
+print X.shape
+train.to_csv('../data/train_encode.csv')
+test.to_csv('../data/test_encode.csv')
+# classification.Train(X, y)
