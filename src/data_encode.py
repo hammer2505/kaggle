@@ -1,36 +1,46 @@
 import pandas as pd
 import numpy as np
+from scipy.sparse import csr_matrix, hstack
 
 ################### read data ###################
-filename = '../data/train_drop.csv'
-traindata = pd.read_csv(filename)
-filename1 = '../data/test_drop.csv'
-testdata = pd.read_csv(filename1)
+train = pd.read_csv('../data/train_drop.csv')
+test = pd.read_csv('../data/train_drop.csv')
 
-data = pd.DataFrame()
-pieces = [traindata, testdata]
-data = pd.concat(pieces)
+# set test loss to NaN
+test['loss'] = np.nan
 
-data.set_index('id', inplace=True)
+# response and IDs
+y = train['loss'].values
+id_train = train['id'].values
+id_test = test['id'].values
 
-categorial_cols = []
-for num in range(1, 117):
-    cat = 'cat' + str(num)
-    categorial_cols.append(cat)
+# stack train test
+ntrain = train.shape[0]
+tr_te = pd.concat((train, test), axis=0)
 
-for categorial_col in categorial_cols:
-    data[categorial_col] = data[categorial_col].astype('category')
+# Preprocessing and transforming to sparse data
+sparse_data = []
 
-data_cl = data.copy()
-for cc in categorial_cols:
-    dummies = pd.get_dummies(data_cl[cc])
-    dummies = dummies.add_prefix("{}#".format(cc))
-    data_cl.drop(cc, axis=1, inplace=True)
-    data_cl = data_cl.join(dummies)
-print data_cl.shape
+f_cat = [f for f in tr_te.columns if 'cat' in f]
+for f in f_cat:
+    dummy = pd.get_dummies(tr_te[f].astype('category'))
+    tmp = csr_matrix(dummy)
+    sparse_data.append(tmp)
 
-unknown_mask = data['loss'].isnull()
-data_test = data_cl[unknown_mask]
-data_train = data_cl[unknown_mask]
+f_num = [f for f in tr_te.columns if 'cont' in f]
+scaler = StandardScaler()
+tmp = csr_matrix(scaler.fit_transform(tr_te[f_num]))
+sparse_data.append(tmp)
+
+del(tr_te, train, test)
+
+# sparse train and test data
+xtr_te = hstack(sparse_data, format='csr')
+xtrain = xtr_te[:ntrain, :]
+xtest = xtr_te[ntrain:, :]
+
+print('Dim train', xtrain.shape)
+print('Dim test', xtest.shape)
+
 data_train.to_csv("../data/train_encode.csv")
 data_test.to_csv("../data/test_encode.csv")
