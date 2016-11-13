@@ -11,7 +11,7 @@ from sklearn.metrics import make_scorer
 
 
 def my_evalerror(ground_truth, predictions):
-    maee = np.abs(np.exp(ground_truth) - np.exp(predictions)).mean()
+    maee = -(np.abs(np.exp(ground_truth) - np.exp(predictions)).mean())
     return maee
 
 ################### read data ###################
@@ -50,3 +50,12 @@ if __name__ == "__main__":
     print('-'*53)
     print('Final Results')
     print('RFC: %f' % rfcBO.res['max']['max_val'])
+
+#####################################
+#-----------------------------------------------------
+#Final Results
+#RFC: -1205.281331
+
+#Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
+#   2 | 08m17s | -1205.28133|     21.8833 |         0.3326 |              8.8627 |       313.2557 | 
+
