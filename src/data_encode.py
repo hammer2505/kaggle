@@ -13,7 +13,7 @@ try:
     test = pd.read_csv('../data/test_encode.csv')
     y = train['loss']
     X = train.drop(['loss', 'id'], 1)
-except:
+except IOError:
     train = pd.read_csv('../data/train.csv')
     test = pd.read_csv('../data/test.csv')
 
@@ -40,6 +40,7 @@ except:
 
     train = joined[joined['loss'].notnull()]
     test = joined[joined['loss'].isnull()]
+
     y = train['loss']
     X = train.drop(['loss', 'id'], 1)
     print X.shape
@@ -48,4 +49,4 @@ except:
 else:
     print "data has been loaded!"
 
-regression.Train(X, y)
+# regression.Train(X, y)

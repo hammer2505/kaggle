@@ -18,7 +18,7 @@ def my_evalerror(ground_truth, predictions):
 
 train = pd.read_csv('../data/train_encode.csv')
 y = train['loss']
-X = train.drop(['loss', 'id'], 1)
+X = train.drop(['loss', 'id', 'Unnamed: 0'], 1)
 score = make_scorer(my_evalerror, greater_is_better=True)
 print(y.shape)
 print(X.shape)
