@@ -1,6 +1,6 @@
 
-''' 
-Author: Danijel Kivaranovic 
+'''
+Author: Danijel Kivaranovic
 Title: Neural network (Keras) with sparse data
 '''
 
@@ -105,22 +105,22 @@ del(xtr_te, sparse_data, tmp)
 ## neural net
 def nn_model():
     model = Sequential()
-    
+
     model.add(Dense(400, input_dim = xtrain.shape[1], init = 'he_normal'))
     model.add(PReLU())
     model.add(BatchNormalization())
     model.add(Dropout(0.4))
-        
+
     model.add(Dense(200, init = 'he_normal'))
     model.add(PReLU())
-    model.add(BatchNormalization())    
+    model.add(BatchNormalization())
     model.add(Dropout(0.2))
-    
+
     model.add(Dense(50, init = 'he_normal'))
     model.add(PReLU())
-    model.add(BatchNormalization())    
+    model.add(BatchNormalization())
     model.add(Dropout(0.2))
-    
+
     model.add(Dense(1, init = 'he_normal'))
     model.compile(loss = 'mae', optimizer = 'adadelta')
     return(model)
@@ -166,5 +166,5 @@ df.to_csv('../result/preds_oob_keras_score.csv', index = False)
 pred_test /= (nfolds*nbags)
 df = pd.DataFrame({'id': id_test, 'loss': pred_test})
 df.to_csv('../result/submission_keras_score.csv', index = False)
-#Keras starter with bagging 1111.84364
-#https://www.kaggle.com/mtinti/allstate-claims-severity/keras-starter-with-bagging-1111-84364
+# Keras starter with bagging 1111.84364
+# https://www.kaggle.com/mtinti/allstate-claims-severity/keras-starter-with-bagging-1111-84364
