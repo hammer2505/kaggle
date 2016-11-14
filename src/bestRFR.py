@@ -10,7 +10,7 @@ import numpy as np
 
 train = pd.read_csv('../data/train_encode.csv')
 y = train['loss']
-X = train.drop(['loss', 'id', 'Unnamed: 0'], 1)
+X = train.drop(['loss', 'id'], 1)
 
 print(train.iloc[0, :])
 print(y.shape)

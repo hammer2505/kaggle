@@ -12,7 +12,7 @@ try:
     train = pd.read_csv('../data/train_encode.csv')
     test = pd.read_csv('../data/test_encode.csv')
     y = train['loss']
-    X = train.drop(['loss', 'id', 'Unnamed: 0'], 1)
+    X = train.drop(['loss', 'id'], 1)
 except IOError:
     train = pd.read_csv('../data/train.csv')
     test = pd.read_csv('../data/test.csv')
@@ -44,8 +44,8 @@ except IOError:
     y = train['loss']
     X = train.drop(['loss', 'id'], 1)
     print X.shape
-    train.to_csv('../data/train_encode.csv')
-    test.to_csv('../data/test_encode.csv')
+    train.to_csv('../data/train_encode.csv', index=False)
+    test.to_csv('../data/test_encode.csv', index=False)
 else:
     print "data has been loaded!"
 

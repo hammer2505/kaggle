@@ -17,7 +17,7 @@ def my_evalerror(ground_truth, predictions):
 ################### read data ###################
 
 train = pd.read_csv('../data/train_encode.csv')
-X = train.drop(['loss', 'id', 'Unnamed: 0'], 1)
+X = train.drop(['loss', 'id'], 1)
 shift = 200
 y = np.log(train['loss'] + shift)
 
