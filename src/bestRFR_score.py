@@ -24,7 +24,7 @@ y = np.log(train['loss'] + shift)
 print(y.shape)
 print(X.shape)
 score = make_scorer(my_evalerror, greater_is_better=True)
-
+log_file = open("../log/RandomForest-score-output-from-BOpt.txt", 'a')
 ################### find best ###################
 
 
@@ -50,12 +50,14 @@ if __name__ == "__main__":
     print('-'*53)
     print('Final Results')
     print('RFC: %f' % rfcBO.res['max']['max_val'])
-
+    print('\nFinal Results', file=log_file)
+    print('RandomForest: %f' % rfcBO.res['max']['max_val'], file=log_file)
+    log_file.flush()
+    log_file.close()
 #####################################
-#-----------------------------------------------------
-#Final Results
-#RFC: -1205.281331
+# -----------------------------------------------------
+# Final Results
+# RFC: -1205.281331
 
-#Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
-#   2 | 08m17s | -1205.28133|     21.8833 |         0.3326 |              8.8627 |       313.2557 | 
-
+# Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
+#   2 | 08m17s | -1205.28133|     21.8833 |         0.3326 |              8.8627 |       313.2557 |

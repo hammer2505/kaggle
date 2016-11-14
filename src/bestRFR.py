@@ -14,7 +14,7 @@ X = train.drop(['loss', 'id'], 1)
 
 print(y.shape)
 print(X.shape)
-
+log_file = open("../log/RandomForest-output-from-BOpt.txt", 'a')
 ################### find best ###################
 
 
@@ -30,22 +30,29 @@ def rfrcv(n_estimators, min_samples_split, max_features, max_depth):
 
 if __name__ == "__main__":
 
+    # rfcBO = BayesianOptimization(rfrcv, {'n_estimators': (10, 500),
+    #                                     'min_samples_split': (2, 25),
+    #                                     'max_features': (0.1, 0.999),
+    #                                     'max_depth': (2, 25)})
+
     rfcBO = BayesianOptimization(rfrcv, {'n_estimators': (100, 500),
                                          'min_samples_split': (2, 40),
                                          'max_features': (0.1, 0.999),
-                                         'max_depth': (25,40)})
+                                         'max_depth': (25, 40)})
 
     rfcBO.maximize()
     print('-'*53)
     print('Final Results')
     print('RFC: %f' % rfcBO.res['max']['max_val'])
-
+    print('\nFinal Results', file=log_file)
+    print('RandomForest: %f' % rfcBO.res['max']['max_val'], file=log_file)
+    log_file.flush()
+    log_file.close()
 
 ##########################################
-#-----------------------------------------------------
-#Final Results
-#RFC: -1252.517889
+# -----------------------------------------------------
+# Final Results
+# RFC: -1252.517889
 
-#Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
-# 29  | 02m35s | -1252.51789|     25.0000 |         0.1000 |              2.0000 |       428.8457 
-
+# Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
+# 29  | 02m35s | -1252.51789|     25.0000 |         0.1000 |              2.0000 |       428.8457

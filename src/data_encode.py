@@ -2,39 +2,50 @@ import pandas as pd
 import numpy as np
 import time
 import os
-import classification
+import regression
 
 ################### read data ###################
 t1 = time.time()
-train = pd.read_csv('../data/train.csv')
-test = pd.read_csv('../data/test.csv')
 
-test['loss'] = np.nan
-joined = pd.concat([train, test])
+try:
+    # notexist
+    train = pd.read_csv('../data/train_encode.csv')
+    test = pd.read_csv('../data/test_encode.csv')
+    y = train['loss']
+    X = train.drop(['loss', 'id'], 1)
+except:
+    train = pd.read_csv('../data/train.csv')
+    test = pd.read_csv('../data/test.csv')
 
-for column in list(train.select_dtypes(include=['object']).columns):
-    if train[column].nunique() != test[column].nunique():
-        set_train = set(train[column].unique())
-        set_test = set(test[column].unique())
-        remove_train = set_train - set_test
-        remove_test = set_test - set_train
+    test['loss'] = np.nan
+    joined = pd.concat([train, test])
 
-        remove = remove_train.union(remove_test)
+    for column in list(train.select_dtypes(include=['object']).columns):
+        if train[column].nunique() != test[column].nunique():
+            set_train = set(train[column].unique())
+            set_test = set(test[column].unique())
+            remove_train = set_train - set_test
+            remove_test = set_test - set_train
 
-        def filter_cat(x):
-            if x in remove:
-                return np.nan
-            return x
+            remove = remove_train.union(remove_test)
 
-        joined[column] = joined[column].apply(lambda x: filter_cat(x), 1)
+            def filter_cat(x):
+                if x in remove:
+                    return np.nan
+                    return x
 
-    joined[column] = pd.factorize(joined[column].values, sort=True)[0]
+            joined[column] = joined[column].apply(lambda x: filter_cat(x), 1)
 
-train = joined[joined['loss'].notnull()]
-test = joined[joined['loss'].isnull()]
-y = train['loss']
-X = train.drop(['loss', 'id'], 1)
-print X.shape
-train.to_csv('../data/train_encode.csv')
-test.to_csv('../data/test_encode.csv')
-# classification.Train(X, y)
+        joined[column] = pd.factorize(joined[column].values, sort=True)[0]
+
+    train = joined[joined['loss'].notnull()]
+    test = joined[joined['loss'].isnull()]
+    y = train['loss']
+    X = train.drop(['loss', 'id'], 1)
+    print X.shape
+    train.to_csv('../data/train_encode.csv')
+    test.to_csv('../data/test_encode.csv')
+else:
+    print "data has been loaded!"
+
+regression.Train(X, y)
