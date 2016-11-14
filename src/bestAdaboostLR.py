@@ -29,10 +29,10 @@ log_file = open("../log/ADaBoostLR-output-from-BOpt.txt", 'a')
 
 def adboostlrcv(n_estimators):
     return cross_val_score(ADaBoost(LR(),
-                           n_estimators=n_estimators,
+                           n_estimators=int(n_estimators),
                            random_state=2016),
                            X, y, scoring=score,
-                           n_jobs=3, cv=3).mean()
+                           n_jobs=1, cv=3).mean()
 
 if __name__ == "__main__":
 

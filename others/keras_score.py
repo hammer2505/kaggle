@@ -1,4 +1,3 @@
-
 '''
 Author: Danijel Kivaranovic
 Title: Neural network (Keras) with sparse data
@@ -10,6 +9,7 @@ np.random.seed(123)
 
 import pandas as pd
 import subprocess
+import tensorflow as tf
 from scipy.sparse import csr_matrix, hstack
 from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import StandardScaler
@@ -18,6 +18,8 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.layers.normalization import BatchNormalization
 from keras.layers.advanced_activations import PReLU
+
+tf.python.control_flow_ops = tf
 
 ## Batch generators ##################################################################################################################################
 
