@@ -170,3 +170,15 @@ df = pd.DataFrame({'id': id_test, 'loss': pred_test})
 df.to_csv('../result/submission_keras_score.csv', index = False)
 # Keras starter with bagging 1111.84364
 # https://www.kaggle.com/mtinti/allstate-claims-severity/keras-starter-with-bagging-1111-84364
+#('Fold ', 1, '- MAE:', 1118.2325836152795)
+#('Fold ', 2, '- MAE:', 1109.2561222326947)
+#('Fold ', 3, '- MAE:', 1135.8988364040274)
+#('Fold ', 4, '- MAE:', 1148.0545523030773)
+#('Fold ', 5, '- MAE:', 1135.6202429621851)
+#('Fold ', 6, '- MAE:', 1113.9086210468329)
+#('Fold ', 7, '- MAE:', 1125.131010369339)
+#('Fold ', 8, '- MAE:', 1172.7201291115243)
+#('Fold ', 9, '- MAE:', 1129.9796887207353)
+#('Fold ', 10, '- MAE:', 1122.0137884902324)
+#('Total - MAE:', 1131.0816115280668)
+
