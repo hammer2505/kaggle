@@ -49,4 +49,5 @@ except IOError:
 else:
     print "data has been loaded!"
 
-# regression.Train(X, y)
+# print X.isnull().sum().sum()
+regression.Train(X, y)

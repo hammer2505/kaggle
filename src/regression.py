@@ -45,6 +45,15 @@ class regressor:
         model = SVR(kernel='poly', C=1e3, degree=2)
         return model
 
+    # Adaboost_LR
+    def ADaboost_Tree_regressor(self):
+        from sklearn.ensemble import AdaBoostRegressor
+        from sklearn.tree import DecisionTreeRegressor
+        model = AdaBoostRegressor(base_estimator = DecisionTreeRegressor(),
+                                  n_estimators=100,
+                                  random_state=2016)
+        return model
+
 
 # end of class regressor define
 
@@ -60,7 +69,8 @@ m_regressors = {
                 'LR': m_regressor.linear_regressor(),  # -1336.47867268 2.80002852333
                 'SVMRBF': m_regressor.SVM_rbf_regressor(),
                 'SVML': m_regressor.SVM_linear_regressor(),
-                'SVMP': m_regressor.SVM_poly_regressor()
+                'SVMP': m_regressor.SVM_poly_regressor(),
+                'ADaTree': m_regressor.ADaboost_Tree_regressor()
                }
 
 
@@ -71,7 +81,7 @@ def Train(train_data, train_label):
     num_folds = 2
     # scoring = 'neg_mean_absolute_error'
     kfold = KFold(n_splits=num_folds, random_state=seed)
-    model = m_regressors['SVML']
+    model = m_regressors['ADaTree']
     score = make_scorer(my_evalerror, greater_is_better=True)
     cv_results = cross_val_score(model, train_data, train_label, cv=kfold, scoring=score, n_jobs=processors)
     print cv_results.mean(), cv_results.std()
