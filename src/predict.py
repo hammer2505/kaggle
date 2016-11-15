@@ -56,5 +56,5 @@ else:
     print "data has been loaded!"
 
 del train, test
-regression.Result(model='RFR', train_data=X, train_label=y, id_train=id_train,
+regression.Result(model='LR', train_data=X, train_label=y, id_train=id_train,
                   test_data=Xtest, id_test=id_test)

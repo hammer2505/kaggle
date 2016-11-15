@@ -27,6 +27,24 @@ class regressor:
         model = LinearRegression()
         return model
 
+    # Ridge Regressor
+    def ridge_regressor(self):
+        from sklearn.linear_model import Ridge
+        model = Ridge(alpha=1, random_state=2016)
+        return model
+
+    # ElasticNet Regressor
+    def elasticnet_regressor(self):
+        from sklearn.linear_model import ElasticNet
+        model = ElasticNet(alpha=0.001, random_state=2016)
+        return model
+
+    # Lasso Regressor
+    def lasso_regressor(self):
+        from sklearn.linear_model import Lasso
+        model = Lasso(alpha=0.001, random_state=2016)
+        return model
+
     # SVM_rbf
     def SVM_rbf_regressor(self):
         from sklearn.svm import SVR
@@ -49,7 +67,7 @@ class regressor:
     def ADaboost_Tree_regressor(self):
         from sklearn.ensemble import AdaBoostRegressor
         from sklearn.tree import DecisionTreeRegressor
-        model = AdaBoostRegressor(base_estimator = DecisionTreeRegressor(),
+        model = AdaBoostRegressor(base_estimator=DecisionTreeRegressor(),
                                   n_estimators=100,
                                   random_state=2016)
         return model
@@ -64,9 +82,12 @@ def my_evalerror(ground_truth, predictions):
 m_regressor = regressor()
 
 m_regressors = {
-                'RFR': m_regressor.random_forest_regressor(),
-                'KNR': m_regressor.K_neighbors_regressor(),  # -1936.87015606 88.2224835863
-                'LR': m_regressor.linear_regressor(),  # -1336.47867268 2.80002852333
+                'RFR': m_regressor.random_forest_regressor(),  # -1223.49657506 0.596663463177
+                'KNR': m_regressor.K_neighbors_regressor(),  # -1484.43383496 1.28055863538
+                'LR': m_regressor.linear_regressor(),  # -1280.09313011 2.26027953754
+                'Ridge': m_regressor.ridge_regressor(),  # -1280.08258478 2.28824695523
+                'Lasso': m_regressor.lasso_regressor(),  # -1279.94049348 1.48991258047
+                'ElasticNet': m_regressor.elasticnet_regressor(),  # -1279.55826425 2.56265747555
                 'SVMRBF': m_regressor.SVM_rbf_regressor(),
                 'SVML': m_regressor.SVM_linear_regressor(),
                 'SVMP': m_regressor.SVM_poly_regressor(),
@@ -81,7 +102,9 @@ def Train(train_data, train_label):
     num_folds = 2
     # scoring = 'neg_mean_absolute_error'
     kfold = KFold(n_splits=num_folds, random_state=seed)
-    model = m_regressors['ADaTree']
+    model = m_regressors['RFR']
+    shift = 200
+    train_label = np.log(train_label+shift)
     score = make_scorer(my_evalerror, greater_is_better=True)
     cv_results = cross_val_score(model, train_data, train_label, cv=kfold, scoring=score, n_jobs=processors)
     print cv_results.mean(), cv_results.std()
@@ -92,6 +115,8 @@ def Result(model, train_data, train_label, id_train, test_data, id_test):
     seed = 2016
     processors = -1
     num_folds = 2
+    shift = 200
+    train_label = np.log(train_label+shift)
     regressor = BaggingRegressor(base_estimator=m_regressors[model], n_jobs=-1)
     regressor.fit(train_data, train_label)
 
@@ -99,9 +124,11 @@ def Result(model, train_data, train_label, id_train, test_data, id_test):
     print model
     print '################ score ##############'
     print my_evalerror(train_label, pred_oob)
+    pred_oob = np.exp(pred_oob) - shift
     df = pd.DataFrame({'id': id_train, 'loss': pred_oob})
     df.to_csv('../result/preds_oob_'+model+'.csv', index=False)
 
     pred_test = regressor.predict(test_data)
+    pred_test = np.exp(pred_test) - shift
     df = pd.DataFrame({'id': id_test, 'loss': pred_test})
     df.to_csv('../result/submission_'+model+'.csv', index=False)
