@@ -58,7 +58,7 @@ if __name__ == '__main__':
     final_fold_prediction = []
     final_fold_real = []
 
-    partial_evalutaion = open('temp_scores.txt', 'w')
+    partial_evalutaion = open('../log/temp_scores.txt', 'w')
     for i, (train_index, test_index) in enumerate(kf):
         print('\n Fold %d' % (i + 1))
         X_train, X_val = X.iloc[train_index], X.iloc[test_index]
