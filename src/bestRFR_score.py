@@ -57,7 +57,7 @@ if __name__ == "__main__":
 #####################################
 # -----------------------------------------------------
 # Final Results
-# RFC: -1205.281331
+# RFC: -1201.068987
 
-# Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
-#   2 | 08m17s | -1205.28133|     21.8833 |         0.3326 |              8.8627 |       313.2557 |
+#  Step |   Time |      Value |   max_depth |   max_features |   min_samples_split |   n_estimators |
+#  10 | 02m33s | -1201.06899 |     22.6952 |         0.2203 |             23.4154 |       287.6454 |

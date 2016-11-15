@@ -12,7 +12,10 @@ class regressor:
     # Random Forest Regressor
     def random_forest_regressor(self):
         from sklearn.ensemble import RandomForestRegressor
-        model = RandomForestRegressor(n_estimators=100)
+        model = RandomForestRegressor(max_depth=int(22.695),
+                                      max_features=0.2203,
+                                      min_samples_split=int(23.4154),
+                                      n_estimators=int(287.6454))
         return model
 
     # K Neighbors Regressor
