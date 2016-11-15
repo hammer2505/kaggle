@@ -1,4 +1,4 @@
-# kaggle-jobs
+# kaggle
 
 This is my second project in kaggle.
 I have do some works before I build this project in github.
