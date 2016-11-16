@@ -85,7 +85,7 @@ def my_evalerror(ground_truth, predictions):
 m_regressor = regressor()
 
 m_regressors = {
-                'RFR': m_regressor.random_forest_regressor(),  # -1223.49657506 0.596663463177
+                'RFR': m_regressor.random_forest_regressor(),  # -1201.068987
                 'KNR': m_regressor.K_neighbors_regressor(),  # -1484.43383496 1.28055863538
                 'LR': m_regressor.linear_regressor(),  # -1280.09313011 2.26027953754
                 'Ridge': m_regressor.ridge_regressor(),  # -1280.08258478 2.28824695523
