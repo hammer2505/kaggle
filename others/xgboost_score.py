@@ -112,7 +112,7 @@ if __name__ == '__main__':
     submission['id'] = ids
     submission['loss'] = prediction
 
-    submission.to_csv('../result/submission_xgboost.csv', index=False)
+    submission.to_csv('../result/submission_xgboost_score.csv', index=False)
 
     final_fold_prediction = pd.concat(final_fold_prediction, ignore_index=True)
     final_fold_real = pd.concat(final_fold_real, ignore_index=True)
