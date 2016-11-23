@@ -85,7 +85,7 @@ if __name__ == "__main__":
     print('\nMedian Loss:', train.loss.median())
     print('Mean Loss:', train.loss.mean())
 
-    ids = pd.read_csv('input/test.csv')['id']
+    ids = pd.read_csv('../data/test.csv')['id']
     train_y = np.log(train['loss'] + shift)
     train_x = train.drop(['loss','id'], axis=1)
     test_x = test.drop(['loss','id'], axis=1)
