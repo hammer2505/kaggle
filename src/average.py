@@ -6,7 +6,7 @@ import regression
 ###############################################################################
 # read data
 result_keras = pd.read_csv('../result/submission_keras_score.csv')
-result_xgboost = pd.read_csv('../result/submission_10fold-average-xgb_1132.106724.csv')
+result_xgboost = pd.read_csv('../result/submission_5fold-average-xgb_fairobj_1130.892212_2016-12-07-13-59.csv')
 ids = result_keras['id']
 predict_keras = result_keras['loss']
 predict_xgboost = result_xgboost['loss']
@@ -19,16 +19,16 @@ predict_last4 = (predict_keras * 7 + predict_xgboost * 3) / 10
 submission = pd.DataFrame()
 submission['id'] = ids
 submission['loss'] = predict_last
-submission.to_csv('../result/submission_keras_new_xgboost_37.csv', index=False)
+submission.to_csv('../result/submission_keras_xgboost_37.csv', index=False)
 
 submission['loss'] = predict_last1
-submission.to_csv('../result/submission_keras_new_xgboost_46.csv', index=False)
+submission.to_csv('../result/submission_keras_xgboost_46.csv', index=False)
 
 submission['loss'] = predict_last2
-submission.to_csv('../result/submission_keras_new_xgboost_55.csv', index=False)
+submission.to_csv('../result/submission_keras_xgboost_55.csv', index=False)
 
 submission['loss'] = predict_last3
-submission.to_csv('../result/submission_keras_new_xgboost_64.csv', index=False)
+submission.to_csv('../result/submission_keras_xgboost_64.csv', index=False)
 
 submission['loss'] = predict_last4
-submission.to_csv('../result/submission_keras_new_xgboost_73.csv', index=False)
+submission.to_csv('../result/submission_keras_xgboost_73.csv', index=False)

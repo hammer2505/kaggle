@@ -6,6 +6,7 @@ from datetime import datetime
 from sklearn.metrics import mean_absolute_error
 from sklearn.cross_validation import KFold
 from scipy.stats import skew, boxcox
+from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 import itertools
 
@@ -22,7 +23,7 @@ def encode(charcode):
         r += (ord(str(charcode)[i]) - ord('A') + 1) * 26 ** (ln - i - 1)
     return r
 
-fair_constant = 2
+fair_constant = 0.7
 def fair_obj(preds, dtrain):
     labels = dtrain.get_label()
     x = (preds - labels)
@@ -59,14 +60,46 @@ if __name__ == "__main__":
     categorical_feats = [x for x in train.columns[1:-1] if 'cat' in x]
     train_test, ntrain = mungeskewed(train, test, numeric_feats)
 
+    # taken from Vladimir's script (https://www.kaggle.com/iglovikov/allstate-claims-severity/xgb-1114)
+    for column in list(train.select_dtypes(include=['object']).columns):
+        if train[column].nunique() != test[column].nunique():
+            set_train = set(train[column].unique())
+            set_test = set(test[column].unique())
+            remove_train = set_train - set_test
+            remove_test = set_test - set_train
+
+            remove = remove_train.union(remove_test)
+
+
+            def filter_cat(x):
+                if x in remove:
+                    return np.nan
+                return x
+
+
+            train_test[column] = train_test[column].apply(lambda x: filter_cat(x), 1)
+
+    # taken from Ali's script (https://www.kaggle.com/aliajouz/allstate-claims-severity/singel-model-lb-1117)
+    train_test["cont1"] = np.sqrt(preprocessing.minmax_scale(train_test["cont1"]))
+    train_test["cont4"] = np.sqrt(preprocessing.minmax_scale(train_test["cont4"]))
+    train_test["cont5"] = np.sqrt(preprocessing.minmax_scale(train_test["cont5"]))
+    train_test["cont8"] = np.sqrt(preprocessing.minmax_scale(train_test["cont8"]))
+    train_test["cont10"] = np.sqrt(preprocessing.minmax_scale(train_test["cont10"]))
+    train_test["cont11"] = np.sqrt(preprocessing.minmax_scale(train_test["cont11"]))
+    train_test["cont12"] = np.sqrt(preprocessing.minmax_scale(train_test["cont12"]))
+
+    train_test["cont6"] = np.log(preprocessing.minmax_scale(train_test["cont6"]) + 0000.1)
+    train_test["cont7"] = np.log(preprocessing.minmax_scale(train_test["cont7"]) + 0000.1)
+    train_test["cont9"] = np.log(preprocessing.minmax_scale(train_test["cont9"]) + 0000.1)
+    train_test["cont13"] = np.log(preprocessing.minmax_scale(train_test["cont13"]) + 0000.1)
+    train_test["cont14"] = (np.maximum(train_test["cont14"] - 0.179722, 0) / 0.665122) ** 0.25
+
     print('')
     for comb in itertools.combinations(COMB_FEATURE, 2):
         feat = comb[0] + "_" + comb[1]
         train_test[feat] = train_test[comb[0]] + train_test[comb[1]]
         train_test[feat] = train_test[feat].apply(encode)
-        print('Analyzing Columns:', feat)
-
-    categorical_feats = [x for x in train_test.columns[1:] if 'cat' in x]
+        print('Combining Columns:', feat)
 
     print('')
     for col in categorical_feats:
@@ -87,7 +120,7 @@ if __name__ == "__main__":
 
     ids = pd.read_csv('../data/test.csv')['id']
     train_y = np.log(train['loss'] + shift)
-    train_x = train.drop(['loss','id'], axis=1)s
+    train_x = train.drop(['loss','id'], axis=1)
     test_x = test.drop(['loss','id'], axis=1)
 
     n_folds = 10
@@ -156,7 +189,7 @@ if __name__ == "__main__":
 
     now = datetime.now()
     score = str(round((cv_sum / n_folds), 6))
-    sub_file = '../result/submission_10fold-average-xgb_fairobj_' + str(score) + '_' + str(
+    sub_file = '../result/submission_5fold-average-xgb_fairobj_' + str(score) + '_' + str(
         now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
     print("Writing submission: %s" % sub_file)
     result.to_csv(sub_file, index=True, index_label='id')
