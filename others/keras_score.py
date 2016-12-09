@@ -185,4 +185,3 @@ df.to_csv('../result/submission_keras_score.csv', index=False)
 #('Fold ', 9, '- MAE:', 1129.9796887207353)
 #('Fold ', 10, '- MAE:', 1122.0137884902324)
 #('Total - MAE:', 1131.0816115280668)
-

@@ -119,18 +119,22 @@ if __name__ == "__main__":
     print('Mean Loss:', train.loss.mean())
 
     ids = pd.read_csv('../data/test.csv')['id']
+    ids_sub = pd.read_csv('../data/train.csv')['id']
     train_y = np.log(train['loss'] + shift)
-    train_x = train.drop(['loss','id'], axis=1)
-    test_x = test.drop(['loss','id'], axis=1)
+    train_x = train.drop(['loss', 'id'], axis=1)
+    test_x = test.drop(['loss', 'id'], axis=1)
+    train_sub_x = train_x
 
     n_folds = 10
     cv_sum = 0
     early_stopping = 100
     fpred = []
+    fpred_sub = []
     xgb_rounds = []
 
     d_train_full = xgb.DMatrix(train_x, label=train_y)
     d_test = xgb.DMatrix(test_x)
+    d_trian_sub = xgb.DMatrix(train_sub_x)
 
     kf = KFold(train.shape[0], n_folds=n_folds)
     for i, (train_index, test_index) in enumerate(kf):
@@ -168,6 +172,7 @@ if __name__ == "__main__":
         cv_score = mean_absolute_error(np.exp(y_val), np.exp(scores_val))
         print('eval-MAE: %.6f' % cv_score)
         y_pred = np.exp(clf.predict(d_test, ntree_limit=clf.best_ntree_limit)) - shift
+        y_sub_pred = np.exp(clf.predict(d_trian_sub, ntree_limit=clf.best_ntree_limit)) - shift
 
         if i > 0:
             fpred = pred + y_pred
@@ -176,7 +181,14 @@ if __name__ == "__main__":
         pred = fpred
         cv_sum = cv_sum + cv_score
 
+        if i > 0:
+            fpred_sub = pred_sub + y_sub_pred
+        else:
+            fpred_sub = y_sub_pred
+        pred_sub = fpred_sub
+
     mpred = pred / n_folds
+    mpred_sub = pred_sub / n_folds
     score = cv_sum / n_folds
     print('Average eval-MAE: %.6f' % score)
     n_rounds = int(np.mean(xgb_rounds))
@@ -187,9 +199,17 @@ if __name__ == "__main__":
     result = result.set_index("id")
     print("%d-fold average prediction:" % n_folds)
 
+    result_sub = pd.DataFrame(mpred, columns=['loss'])
+    result_sub["id"] = ids_sub
+    result_sub = result_sub.set_index("id")
+
     now = datetime.now()
     score = str(round((cv_sum / n_folds), 6))
     sub_file = '../result/submission_5fold-average-xgb_fairobj_' + str(score) + '_' + str(
         now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
     print("Writing submission: %s" % sub_file)
     result.to_csv(sub_file, index=True, index_label='id')
+
+    train_sub_file = '../result/pred_oob_xgboost_featurecomb + '_' + str(
+        now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
+    result_sub.to_csv(train_sub_file, index=True, index_label='id')
