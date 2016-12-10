@@ -199,7 +199,7 @@ if __name__ == "__main__":
     result = result.set_index("id")
     print("%d-fold average prediction:" % n_folds)
 
-    result_sub = pd.DataFrame(mpred, columns=['loss'])
+    result_sub = pd.DataFrame(mpred_sub, columns=['loss'])
     result_sub["id"] = ids_sub
     result_sub = result_sub.set_index("id")
 
@@ -210,6 +210,6 @@ if __name__ == "__main__":
     print("Writing submission: %s" % sub_file)
     result.to_csv(sub_file, index=True, index_label='id')
 
-    train_sub_file = '../result/pred_oob_xgboost_featurecomb + '_' + str(
+    train_sub_file = '../result/pred_oob_xgboost_featurecomb' + '_' + str(
         now.strftime("%Y-%m-%d-%H-%M")) + '.csv'
     result_sub.to_csv(train_sub_file, index=True, index_label='id')
